@@ -1,0 +1,22 @@
+﻿@{ var session = System.Web.HttpContext.Current.Session; }
+<div class="row">
+    <div class="span8 offset2" style="text-align: center;">
+       @if (session["loggedIn"] != null)
+       {
+           
+           <h4>
+            Hello
+            @session["firstName"]
+            @session["lastName"]
+        </h4>
+        <br />
+        <p>
+            You logged in via group <b>@session["groupName"]</b>
+        </p>
+           
+       } else {
+        <a class="btn btn-large"
+           href="@Maestrano.MnoHelper.Sso.InitUrl()">Login</a>
+       } 
+    </div>
+</div>

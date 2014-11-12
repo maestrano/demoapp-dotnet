@@ -1,0 +1,35 @@
+﻿@{ var session = System.Web.HttpContext.Current.Session; }
+<div class="row">
+    <div class="span12" style="text-align: center;">
+        @if (session["loggedIn"] == null)
+        {
+        <p class="text-error">
+            You need to be logged in to see your Maestrano bills
+        </p>
+        } else {
+        <p>Below are the bills related to the group: @session["groupName"]</p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>UID</th>
+                    <th>Description</th>
+                    <th>Price (cents)</th>
+                    <th>Currency</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var bill in ViewBag.Bills) {
+                    <tr>
+                        <td>@bill.Id</td>
+                        <td>@bill.Description</td>
+                        <td>@bill.PriceCents</td>
+                        <td>@bill.Currency</td>
+                        <td>@bill.CreatedAt</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        }
+    </div>
+</div>
