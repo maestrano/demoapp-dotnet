@@ -17,7 +17,7 @@ namespace MnoDemoApp.Controllers
 
             if (MnoHelper.Authenticate(request))
             {
-                result = (MnoHelper.ToMetadata().ToString());
+                result = MnoHelper.ToMetadata().ToString();
             }
             else
             {
