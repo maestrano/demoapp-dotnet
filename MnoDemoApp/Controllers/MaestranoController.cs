@@ -21,11 +21,10 @@ namespace MnoDemoApp.Controllers
             }
             else
             {
-                result = ("Failed");
+                result = "Failed";
             }
-
-            var results = Json(result, JsonRequestBehavior.AllowGet);
-            return results;
+            
+            return Content(result, "application/json");
         }
 
         public ActionResult Init()
