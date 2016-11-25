@@ -21,6 +21,8 @@ namespace MnoDemoApp
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             AuthConfig.RegisterAuth();
+            //Auto Configure Maestrano using Environment variables
+            Maestrano.MnoHelper.AutoConfigure();
         }
     }
 }

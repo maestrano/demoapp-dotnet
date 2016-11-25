@@ -1,0 +1,44 @@
+﻿@{ var session = System.Web.HttpContext.Current.Session; }
+<div class="row">
+    <div class="span12">
+        @if (session["loggedIn"] == null)
+        {
+            <p class="text-error">
+                You need to be logged in to do a Connec! Call
+            </p>
+        }
+        else
+        {
+            <p>This is an example of a typed call to Connec! call to Items</p>
+            <pre>string groupId = (String)session["groupId"];
+var client = Maestrano.Connec.Client.New(groupId, marketplace);
+var itemsResponse = client.Get<ItemsResult>("/items");</pre>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>UID</th>
+                        <th>Name</th>
+                        <th>Created At</th>
+                        <th>Sale Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.Items)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Name</td>
+                            <td>@item.CreatedAt</td>
+                            <td>@(item.SalePrice != null ? @item.SalePrice.TotalAmount : "")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+
+            <p>This is an example of a raw call to Connec! to get Company information</p>
+            <pre>client.Get("/company").Content;</pre>
+            <pre>@ViewBag.RawConnecResponse</pre>
+        }
+    </div>
+</div>
