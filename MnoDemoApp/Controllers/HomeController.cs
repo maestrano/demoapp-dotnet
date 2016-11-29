@@ -16,11 +16,13 @@ namespace MnoDemoApp.Controllers
             var session = System.Web.HttpContext.Current.Session;
             if (session["loggedIn"] != null)
             {
-                var mnoSession = new Maestrano.Sso.Session(session);
+                string marketplace = (String) session["marketplace"];
+
+                var mnoSession = new Maestrano.Sso.Session(marketplace, session);
 
                 if (!mnoSession.IsValid())
                 {
-                    Response.Redirect(MnoHelper.Sso.InitUrl());
+                    Response.Redirect(MnoHelper.With(marketplace).Sso.InitUrl());
                 }
             }
 
