@@ -1,6 +1,6 @@
 ﻿@{ var session = System.Web.HttpContext.Current.Session; }
 <div class="row">
-    <div class="span8 offset2" style="text-align: center;">
+    <div class="span8 offset2">
         @if (session["loggedIn"] != null)
         {
             <h4>
@@ -15,9 +15,14 @@
         }
         else
         {
+            <h3>Discovered Marketplaces</h3>
             foreach (var item in Maestrano.MnoHelper.Presets())
             {
-                <a class="btn btn-large" href="@item.Value.Sso.InitUrl()">Login To @item.Key</a>
+
+                <div>
+                    <h4>@item.Key</h4>
+                    <span>@item.Value.Api.Host</span>
+                </div>
             }
         }
     </div>
