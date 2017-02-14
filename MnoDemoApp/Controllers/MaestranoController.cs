@@ -43,14 +43,16 @@ namespace MnoDemoApp.Controllers
         public ActionResult Consume(string marketplace)
         {
             var request = System.Web.HttpContext.Current.Request;
-            var preset = MnoHelper.With(marketplace);
+            //Retrieving the Maestrano configuration preset from the marketplace id
+            var preset  = MnoHelper.With(marketplace);
             // Get SAML response, build maestrano user and group objects
             var samlResp = preset.Sso.BuildResponse(request.Params["SAMLResponse"]);
 
+            // Check response validity
             if (samlResp.IsValid())
             {
-                var mnoUser = Maestrano.Sso.User.With(marketplace).New(samlResp);
-                var mnoGroup = Maestrano.Sso.Group.With(marketplace).New(samlResp);
+                var mnoUser = new Maestrano.Sso.User(samlResp);
+                var mnoGroup = new Maestrano.Sso.Group(samlResp);
                 var session = System.Web.HttpContext.Current.Session;
 
                 // At this step we should link the user and group to actual
@@ -67,8 +69,8 @@ namespace MnoDemoApp.Controllers
                 // are only unique across users.
                 // If you chose 'virtual' then toId() and toEmail() will return a virtual (or composite) attribute
                 // which is truly unique across users and groups
-                session["email"] = mnoUser.ToEmail();
-                session["id"] = mnoUser.ToUid();
+                session["email"] = mnoUser.Email;
+                session["id"] = mnoUser.Uid;
 
                 // Flag user as logged in
                 session["loggedIn"] = true;
@@ -77,12 +79,12 @@ namespace MnoDemoApp.Controllers
 
                 // Set Maestrano session - used for Single Logout
                 preset.Sso.SetSession(session, mnoUser);
+                return Redirect("/");
             }
-            
-
-            return Redirect("/") ;
+            else
+            {
+                return Content("Invalid SAML Response");
+            }
         }
-
-
     }
 }

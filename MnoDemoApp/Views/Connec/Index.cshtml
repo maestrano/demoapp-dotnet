@@ -9,10 +9,11 @@
         }
         else
         {
+            <h2> Typed call</h2>
             <p>This is an example of a typed call to Connec! call to Items</p>
             <pre>string groupId = (String)session["groupId"];
 var client = Maestrano.Connec.Client.New(groupId, marketplace);
-var itemsResponse = client.Get<ItemsResult>("/items");</pre>
+var itemsResponse = client.Get&lt;ItemsResult&gt;("/items");</pre>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -35,7 +36,7 @@ var itemsResponse = client.Get<ItemsResult>("/items");</pre>
                 </tbody>
             </table>
 
-
+            <h2>Raw call</h2>
             <p>This is an example of a raw call to Connec! to get Company information</p>
             <pre>client.Get("/company").Content;</pre>
             <pre>@ViewBag.RawConnecResponse</pre>

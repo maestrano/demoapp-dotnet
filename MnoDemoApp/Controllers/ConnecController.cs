@@ -19,14 +19,14 @@ namespace MnoDemoApp.Controllers
             if (session["loggedIn"] != null)
             {
                 string marketplace = (String)session["marketplace"];
-                var mnoSession = new Maestrano.Sso.Session(marketplace, session);
                 var preset = MnoHelper.With(marketplace);
+                var mnoSession = new Maestrano.Sso.Session(preset, session);
                 if (!mnoSession.IsValid())
                 {
                     Response.Redirect(preset.Sso.InitUrl());
                 }
                 string groupId = (String)session["groupId"];
-                var client = Maestrano.Connec.Client.New(groupId, marketplace);
+                var client = preset.ConnecClient(groupId);
                 var itemsResponse = client.Get<ItemsResult>("/items");
                 ViewBag.Items = itemsResponse.Data.Items;
                 var response = client.Get("/company");
