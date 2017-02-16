@@ -16,25 +16,28 @@ namespace MnoDemoApp
     {
         protected void Application_Start()
         {
-            //http://stackoverflow.com/questions/10822509/the-request-was-aborted-could-not-create-ssl-tls-secure-channel
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
-                | SecurityProtocolType.Tls11
-                | SecurityProtocolType.Tls12
-                | SecurityProtocolType.Ssl3;
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             AuthConfig.RegisterAuth();
+
+
+
+            // Adding TSL12 Security Protocol
+            // Maestrano does not support SSL3 protocol as it is insecure
+            // Maestrano supports TLS 1.2
+            // https://blog.mozilla.org/security/2014/10/14/the-poodle-attack-and-the-end-of-ssl-3-0/
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+
             //Auto Configure Maestrano using Environment variables
             Maestrano.MnoHelper.AutoConfigure();
+            
             //Auto Configure Maestrano directly
             //var apiKey = "[YOUR-API-KEY]";
             //var apiSecret = "[YOUR-API-SECRET]";
-            //Maestrano.MnoHelper.AutoConfigure("https://developer-uat.maestrano.io", "/api/config/v1", apiKey, apiSecret);
-
-
+            //Maestrano.MnoHelper.AutoConfigure("https://developer.maestrano.com", "/api/config/v1", apiKey, apiSecret);
         }
     }
 }
