@@ -5,16 +5,23 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using Maestrano;
+using log4net;
 
 namespace MnoDemoApp.Controllers
 {
+
+
     public class MaestranoController : Controller
     {
+
+        private static readonly ILog logger = LogManager.GetLogger(typeof(MaestranoController));
+
         /// <summary> /maestrano/metadata/{marketplace}</summary>
         /// <param name="marketplace"> marketplace for which the saml is being done
+        [HttpGet]
         public ActionResult Metadata(string marketplace)
         {
-            string result  = null;
+            string result = null;
             var request = System.Web.HttpContext.Current.Request;
             var preset = MnoHelper.With(marketplace);
             if (preset.Authenticate(request))
@@ -25,11 +32,12 @@ namespace MnoDemoApp.Controllers
             {
                 result = "Can't authenticate for marketplace: " + marketplace;
             }
-            
+
             return Content(result, "application/json");
         }
 
-        /// <summary> /maestrano/init/{marketplace}</summary>
+        /// <summary> /maestrano/init/?marketplace={marketplace}</summary>
+        [HttpGet]
         public ActionResult Init(string marketplace)
         {
             var request = System.Web.HttpContext.Current.Request;
@@ -38,13 +46,14 @@ namespace MnoDemoApp.Controllers
             return Redirect(ssoUrl);
         }
 
-        /// <summary> /maetrano/consume/{marketplace}</summary>
+        /// <summary> /maetrano/consume/?marketplace={marketplace}</summary>
         /// <param name="marketplace"> marketplace for which the saml is being done
+        [HttpPost]
         public ActionResult Consume(string marketplace)
         {
             var request = System.Web.HttpContext.Current.Request;
             //Retrieving the Maestrano configuration preset from the marketplace id
-            var preset  = MnoHelper.With(marketplace);
+            var preset = MnoHelper.With(marketplace);
             // Get SAML response, build maestrano user and group objects
             var samlResp = preset.Sso.BuildResponse(request.Params["SAMLResponse"]);
 
@@ -83,8 +92,16 @@ namespace MnoDemoApp.Controllers
             }
             else
             {
+                logger.Error("Invalid SAML Response: " + Request.Params["SAMLResponse"]);
                 return Content("Invalid SAML Response");
             }
+        }
+
+        [HttpDelete]
+        public ActionResult Groupdeleted(string marketplace, string groupid)
+        {
+            logger.Debug("Groupdeleted webhook received for " + marketplace + " , " + groupid);
+            return Content("OK");
         }
     }
 }
