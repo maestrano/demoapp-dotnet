@@ -1,8 +1,11 @@
-﻿using Maestrano;
+﻿using log4net;
+using Maestrano;
 using Maestrano.Api;
 using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -10,7 +13,9 @@ using System.Web.Mvc;
 namespace MnoDemoApp.Controllers
 {
     public class ConnecController : Controller
-    {
+    {  
+        private static readonly ILog logger = LogManager.GetLogger(typeof(ConnecController));
+
         // GET: Connec
         public ActionResult Index()
         {
@@ -26,13 +31,35 @@ namespace MnoDemoApp.Controllers
                     Response.Redirect(preset.Sso.InitUrl());
                 }
                 string groupId = (String)session["groupId"];
+                //Instantiating connec Client for the givent groupId
                 var client = preset.ConnecClient(groupId);
+
+                // Example of a call receiving a typed class
                 var itemsResponse = client.Get<ItemsResult>("/items");
                 ViewBag.Items = itemsResponse.Data.Items;
+
+                // Example of a call receiving raw json
                 var response = client.Get("/company");
                 var parsedJson = JsonConvert.DeserializeObject(response.Content);
                 var formattedJson = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
                 ViewBag.RawConnecResponse = formattedJson;
+
+                // Example of an AsynchronousCall with parameters, using the internal RestClient
+                String top = "2";
+                String skip = "1";
+
+                var parameters = new NameValueCollection();
+                parameters.Add("$top", top);
+                parameters.Add("$skip", skip);
+                var restRequest = client.PrepareRequest(Method.GET, "items", parameters);
+                client.InternalClient.ExecuteAsync(restRequest, restResponse =>
+                {
+                    if (restResponse != null && restResponse.ErrorException != null)
+                    {
+                        logger.Error("Error retrieving response.", restResponse.ErrorException);
+                    }
+                    logger.Debug("Asynchronous Call worked" + restResponse.Content);
+                });
             }
 
             return View();
