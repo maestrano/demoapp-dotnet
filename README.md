@@ -47,7 +47,9 @@ Start the application
 
 # Test Webhooks
 
-- Install [ngrok](https://ngrok.com) (You may have to run that command `ngrok http [port] -host-header="localhost:[port]"` http://stackoverflow.com/questions/30535336/exposing-localhost-to-the-internet-via-tunneling-using-ngrok-http-error-400)
+- Install [ngrok](https://ngrok.com) (You may have to run that command `ngrok http {PORT} -host-header="localhost:{PORT}"`
+For example `ngrok http 63705 -host-header="localhost:63705"`
+ http://stackoverflow.com/questions/30535336/exposing-localhost-to-the-internet-via-tunneling-using-ngrok-http-error-400)
 - Retrieve the ngrok url (something like: https://c1e285c0.ngrok.io)
 - Update `Host` and `Idm` to this url
 - The `MaestranoController` will receive the call in the `Groupdeleted(string marketplace, string groupid)` method
